@@ -152,6 +152,11 @@ export default {
         endpoint = endpoint.substring(0, endpoint.indexOf('/:place_id'))
       }
 
+      if (endpoint.indexOf(':slug')) {
+        endpoint = endpoint.replace(':slug', this.request.parameters.slug)
+        // endpoint = endpoint.substring(0, endpoint.indexOf('/:slug'))
+      }
+
       if (endpoint.endsWith('/:id')) {
         endpoint = endpoint.substring(0, endpoint.indexOf('/:id'))
         if (this.selectedTwitterEndpoint.parameters.length === 0) { // todo: too crude, need to check if there are endpoints where the doc lists params but not the id one
@@ -164,6 +169,9 @@ export default {
     },
     updateRequestParameters: function (parameter, event) {
       this.$set(this.request.parameters, parameter.Name, event.target.value)
+      if (parameter.Name === 'slug') {
+        this.updateRequestEndpoint() // for :slug
+      }
     },
     badgeClass (level) {
       switch (level) {
