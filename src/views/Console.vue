@@ -42,26 +42,20 @@
                         </div>
                         <div v-if="selectedTwitterEndpoint.parameters.length">
                             <h4>Parameters</h4>
-                            <form>
+                            <form @submit.prevent="makeTwitterApiRequest()">
                                 <template v-for="parameter in selectedTwitterEndpoint.parameters">
-                                    <div class="form-group" :key="parameter.Name">
+                                    <div class="form-group" :key="selectedTwitterEndpoint.endpoint + parameter.Name">
                                         <label><strong>{{ parameter.Name }} </strong><span :class="badgeClass(parameter.Required)">{{ parameter.Required }}</span></label>
                                         <input v-if="parameter.Name === 'stringify_ids'" type="text" class="form-control" value="true" readonly>
                                         <input v-else type="text" class="form-control" @input="updateRequestParameters(parameter, $event)">
                                         <small class="form-text text-muted" v-html="parameter.Description"></small>
                                     </div>
                                 </template>
+                            <button type="submit" class="btn btn-primary" @click="makeTwitterApiRequest()">Send request</button>
                             </form>
                         </div>
                     </div><!-- /.col -->
                 </div><!-- /.row mt-3 -->
-
-                <div class="row mt-5 mb-5">
-                    <div class="col text-right">
-                        <button class="btn btn-primary" @click="makeTwitterApiRequest()">Send request</button>
-
-                    </div><!-- /.col -->
-                </div><!-- /.row mt-5 -->
 
                 <div class="row mt-5 mb-5">
                     <div class="col">
@@ -76,7 +70,9 @@
                 <div class="row">
                     <div class="col p-5 bg-light">
                         <h2>Result</h2>
-                            <vue-json-pretty :data="response"></vue-json-pretty>
+                        <!-- <div v-if="responseIsTwitterError" class="alert alert-warning" role="alert">Check your request - the Twitter API returned an error.</div> -->
+                        <div v-if="responseIsTwitterError" class="alert alert-warning" role="alert">{{ response[0].message }}<br><br>Please check your request. You can also <a href="https://github.com/jonasjancarik/twitter-tools-front/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">file an issue</a> on GitHub.</div><!-- /.alert -->
+                        <vue-json-pretty :data="response"></vue-json-pretty>
                     </div><!-- /.col -->
                 </div><!-- /.row mt-5 -->
             </div><!-- /.col -->
@@ -116,6 +112,7 @@ export default {
         }
       },
       response: '',
+      responseIsTwitterError: false,
       errorDisplay: ''
     }
   },
@@ -130,15 +127,21 @@ export default {
         this.errorDisplay = error.message
         this.loaderShow = false
       }
-      console.log(result)
-      this.response = result.data
+
+      if (result.data.twitterError) {
+        this.responseIsTwitterError = true
+        this.response = result.data.twitterError
+      } else {
+        this.responseIsTwitterError = false
+        this.response = result.data
+      }
     },
     listEndpointURLs () {
       this.twitterApiEndpoints.forEach(endpoint => {
         this.twitterEndpointUrls.push(endpoint.endpoint)
       })
     },
-    updateRequestEndpoint: function () {
+    updateRequest: function () {
       // todo: e.g. feedback/show/:id.json doesn't include the id parameter in the documentation, so it should be added on the fly as a form field
       var endpoint = this.selectedTwitterEndpoint.endpoint
 
@@ -166,11 +169,12 @@ export default {
 
       //   this.$set(this.request, 'endpoint', endpoint)
       this.request.endpoint = endpoint
+      this.request.method = this.selectedTwitterEndpoint.method
     },
     updateRequestParameters: function (parameter, event) {
       this.$set(this.request.parameters, parameter.Name, event.target.value)
       if (parameter.Name === 'slug') {
-        this.updateRequestEndpoint() // for :slug
+        this.updateRequest() // for :slug
       }
     },
     badgeClass (level) {
@@ -193,7 +197,10 @@ export default {
     selectedTwitterEndpointName: function (val) {
       var vm = this
       this.selectedTwitterEndpoint = this.$_.find(this.twitterApiEndpoints, function (o) { return o.endpoint === vm.selectedTwitterEndpointName })
-      this.updateRequestEndpoint()
+      this.updateRequest()
+      this.request.parameters = {
+        stringify_ids: true
+      }
     }
   }
 }
