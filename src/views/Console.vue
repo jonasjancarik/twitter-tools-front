@@ -38,20 +38,21 @@
 
                 <div class="row mt-3">
                     <div class="col">
-                        <div v-html="selectedTwitterEndpoint.description"></div>
-                            <div>
-                                <h4>Parameters</h4>
-                                <form>
-                                    <template v-for="parameter in selectedTwitterEndpoint.parameters">
-                                        <div class="form-group" :key="parameter.Name">
-                                            <label><strong>{{ parameter.Name }} </strong><span :class="badgeClass(parameter.Required)">{{ parameter.Required }}</span></label>
-                                            <input v-if="parameter.Name === 'stringify_ids'" type="text" class="form-control" value="true" readonly>
-                                            <input v-else type="text" class="form-control" @input="updateRequestParameters(parameter, $event)">
-                                            <small class="form-text text-muted" v-html="parameter.Description"></small>
-                                        </div>
-                                    </template>
-                                </form>
-                            </div>
+                        <div v-html="selectedTwitterEndpoint.description" class="bg-light p-2 mb-3 rounded">
+                        </div>
+                        <div v-if="selectedTwitterEndpoint.parameters.length">
+                            <h4>Parameters</h4>
+                            <form>
+                                <template v-for="parameter in selectedTwitterEndpoint.parameters">
+                                    <div class="form-group" :key="parameter.Name">
+                                        <label><strong>{{ parameter.Name }} </strong><span :class="badgeClass(parameter.Required)">{{ parameter.Required }}</span></label>
+                                        <input v-if="parameter.Name === 'stringify_ids'" type="text" class="form-control" value="true" readonly>
+                                        <input v-else type="text" class="form-control" @input="updateRequestParameters(parameter, $event)">
+                                        <small class="form-text text-muted" v-html="parameter.Description"></small>
+                                    </div>
+                                </template>
+                            </form>
+                        </div>
                     </div><!-- /.col -->
                 </div><!-- /.row mt-3 -->
 
@@ -145,9 +146,13 @@ export default {
         endpoint = endpoint.substring(0, endpoint.indexOf('.json'))
       }
 
+      if (endpoint.endsWith(':place_id')) {
+        endpoint = endpoint.substring(0, endpoint.indexOf('/:place_id'))
+      }
+
       if (endpoint.endsWith('/:id')) {
         endpoint = endpoint.substring(0, endpoint.indexOf('/:id'))
-        if (this.selectedTwitterEndpoint.parameters.length === 0) { // todo: too crude, need to check if there are endpoints where the doc lists params but no the id one
+        if (this.selectedTwitterEndpoint.parameters.length === 0) { // todo: too crude, need to check if there are endpoints where the doc lists params but not the id one
           this.selectedTwitterEndpoint.parameters.push({ Name: 'id', Required: 'required' })
         }
       }
@@ -188,6 +193,10 @@ export default {
 .v-select .dropdown-toggle .clear {
     top: 3px;
     position: relative;
+}
+
+.dropdown-toggle .clear {
+    display: none !important;
 }
 
 .dropdown-toggle::after {
