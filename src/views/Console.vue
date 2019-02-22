@@ -142,6 +142,8 @@ export default {
       // todo: e.g. feedback/show/:id.json doesn't include the id parameter in the documentation, so it should be added on the fly as a form field
       var endpoint = this.selectedTwitterEndpoint.endpoint
 
+      endpoint = endpoint.split(' ')[0]
+
       if (endpoint.endsWith('.json')) {
         endpoint = endpoint.substring(0, endpoint.indexOf('.json'))
       }
