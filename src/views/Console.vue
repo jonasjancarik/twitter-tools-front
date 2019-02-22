@@ -194,7 +194,7 @@ export default {
     display: none !important;
 }
 
-body {
-    min-height: 100vh
+.v-select.single.open .selected-tag {
+    top: 7px;
 }
 </style>
