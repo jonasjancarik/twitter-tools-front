@@ -34,7 +34,7 @@ const router = new Router({
       name: 'Console',
       component: Console,
       meta: { requiresAuth: true }
-    }    
+    }
     // {
     //   path: '/about',
     //   name: 'about',

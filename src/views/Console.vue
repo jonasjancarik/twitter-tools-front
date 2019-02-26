@@ -5,7 +5,7 @@
                 <div class="container">
                 <div class="row">
                 <b-col>
-                    <b-alert show>Something went wrong :( {{ errorDisplay }}</b-alert>
+                    <b-alert dismissible show>Something went wrong :( {{ errorDisplay }}</b-alert>
                 </b-col>
                     </div><!-- /.row -->
                 </div><!-- /.container -->
@@ -16,7 +16,7 @@
                 </div><!-- /.col -->
             </div><!-- /.row -->
 
-            <div class="row">
+            <div class="row min-vh-100">
             <div class="col-md-4 py-5" style="background-color: #efefef;">
            <div class="row">
                 <div class="col">
@@ -57,22 +57,23 @@
                     </div><!-- /.col -->
                 </div><!-- /.row mt-3 -->
 
-                <div class="row mt-5 mb-5">
+                <!-- <div class="row mt-5 mb-5">
                     <div class="col">
-                        <vue-json-pretty :data="request"></vue-json-pretty>
-                    </div><!-- /.col -->
-                </div><!-- /.row mt-5 -->
+                        <h3>Request parameters preview</h3>
+                        <vue-json-pretty :data="request.parameters"></vue-json-pretty>
+                    </div>
+                </div> -->
 
                 </template><!-- /.col -->
 
         </div>
             <div class="col">
-                <div class="row">
+                <div class="row h-100">
                     <div class="col p-5 bg-light">
                         <h2>Result</h2>
                         <!-- <div v-if="responseIsTwitterError" class="alert alert-warning" role="alert">Check your request - the Twitter API returned an error.</div> -->
                         <div v-if="responseIsTwitterError" class="alert alert-warning" role="alert">{{ response[0].message }}<br><br>Please check your request. You can also <a href="https://github.com/jonasjancarik/twitter-tools-front/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">file an issue</a> on GitHub.</div><!-- /.alert -->
-                        <vue-json-pretty :data="response"></vue-json-pretty>
+                        <request-result :data="response"></request-result>
                     </div><!-- /.col -->
                 </div><!-- /.row mt-5 -->
             </div><!-- /.col -->
@@ -84,7 +85,8 @@
 <script>
 // @ is an alias to /src
 import vSelect from 'vue-select'
-import VueJsonPretty from 'vue-json-pretty'
+
+import RequestResult from '@/components/RequestResult.vue'
 
 import { twitterApiEndpoints } from '@/helpers/twitterApiEndpoints'
 import TwitterService from '@/services/TwitterService'
@@ -93,7 +95,7 @@ export default {
   name: 'console',
   components: {
     'v-select': vSelect,
-    'vue-json-pretty': VueJsonPretty
+    'request-result': RequestResult
   },
   data () {
     return {
@@ -207,6 +209,11 @@ export default {
 </script>
 
 <style>
+
+.dropdown-toggle {
+    background-color: #fff;
+}
+
 .v-select .dropdown-toggle .clear {
     top: 3px;
     position: relative;
