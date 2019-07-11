@@ -16,7 +16,7 @@
                 </div><!-- /.col -->
             </div><!-- /.row -->
 
-            <div class="row min-vh-100">
+            <div class="row">
             <div class="col-md-4 py-5" style="background-color: #efefef;">
            <div class="row">
                 <div class="col">
@@ -113,7 +113,7 @@ export default {
           secret: this.$store.state.auth.credential.secret
         }
       },
-      response: '',
+      response: {},
       responseIsTwitterError: false,
       errorDisplay: ''
     }
