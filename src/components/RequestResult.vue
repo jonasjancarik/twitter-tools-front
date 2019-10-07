@@ -7,7 +7,7 @@
     <div class="table-responsive">
       <vuetable v-if="dataForVuetable.length" ref="vuetable" :data="{data: dataForVuetable}" data-path="data" :fields="fields" :api-mode="false"></vuetable>
     </div><!-- /.table-responsive -->
-    <vue-json-pretty :data="data"></vue-json-pretty>
+    <vue-json-pretty :data="data" :showDoubleQuotes="true"></vue-json-pretty>
   </div>
 </template>
 
