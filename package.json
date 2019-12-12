@@ -13,7 +13,7 @@
     "bootstrap-vue": "^2.0.0-rc.26",
     "firebase": "^6.2.4",
     "firebaseui": "^4.0.0",
-    "jquery": "^3.0.0",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.14",
     "popper.js": "^1.14.7",
     "register-service-worker": "^1.5.2",
